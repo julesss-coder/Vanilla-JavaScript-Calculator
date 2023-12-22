@@ -1,0 +1,42 @@
+Version 1
+
+prevOperand is a number 
+operator 
+currentOperand is a number
+
+UI
+Phase 1
+- [x] Clicking a number should display it in lower part of display.
+- [x] Same for operator.
+- [x] Clicking C should delete last position of lowerDisplay.
+- [x] Clicking AC should clear whole display.
+
+Phase 2
+- [ ] If clicking =, if prevOperand exists, and if operator exists, and if currentOperand exists, prevOperand, operator and currentOperand should be displayed in upper part of display. Result in lower part.
+- [ ] AC should clear the whole display.
+- [ ] It should display current operand in lower part of display.
+- [ ] It should display previous part of calculation in upper part of display.
+
+
+Functionality
+
+- [ ] '.' should append a comma to currentOperand
+
+If !prevOperand && !operator:
+  currentOperand += number clicked
+If currentOperand:
+  If operator clicked:
+    assign it to operator
+
+
+
+- [ ] Clicking a number, if currentOperand does not exist, should assign it to currentOperand. 
+  - [ ] If operator does not exist, append number to 
+- [ ] Clicking an operation, if currentOperand exists, should set `operator` to operator clicked.
+- [ ] Clicking a number if currentOperand exists, and operator exists, should set prevOperand to currentOperand, and currentOperand to the number clicked.
+- [ ] C button should clear last position of current operand, if it exists. 
+- [ ] AC should clear the operands and operators, result.
+
+
+
+

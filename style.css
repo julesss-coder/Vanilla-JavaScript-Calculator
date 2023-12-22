@@ -1,8 +1,18 @@
+.calculator-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  height: 100vh;
+}
+
 .calculator-grid-container {
   display: grid;
   border: 1px solid black;
   grid-template-rows: minmax(140px, auto) repeat(5, 100px);
   grid-template-columns: repeat(4, 1fr);
+  width: 400px;
+  font-size: larger;
+  font-family: sans-serif;
 }
 
 .display {
