@@ -1,4 +1,12 @@
-.calculator-page {
+*, *::before, *::after {
+  box-sizing: border-box;
+  font-family: monospace;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  background-color:blanchedalmond;
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -6,29 +14,48 @@
 }
 
 .calculator-grid-container {
+  align-self: center;
   display: grid;
-  border: 1px solid black;
-  grid-template-rows: minmax(140px, auto) repeat(5, 100px);
   grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: minmax(140px, auto) repeat(5, 100px);
+  justify-content: center;
+  align-content: center;
+  border: 1px solid beige;
   width: 400px;
   font-size: larger;
   font-family: sans-serif;
 }
 
+.calculator-grid-container > button {
+  font-size: 2rem;
+  background-color: lightgray;
+  border: 2px solid beige;
+  cursor: pointer;
+}
+
+.calculator-grid-container > button:hover {
+  background-color: rgba(211, 211, 211, 0.65);
+}
+
 .display {
-  background-color: pink;
+  background-color: rgba(0, 0, 0, .75);
+  color: white;
   grid-column: 1 / 5;
+  padding: 8px;
+  font-size: 2rem;
+  /* Diese beiden testen */
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
-.all-clear-button {
-  background-color: lightblue;
-  grid-column: 1 / 3;
+.display > .calculation-first-part {
+  color: rgba(255, 255, 255, .75);
 }
 
-.clear-button {
-  background-color: lightsalmon;
-  grid-column: 3 / 5;
+.span-two {
+  grid-column: span 2;
 }
+
 
 .calculator-grid-container > div:not(.display) {
   display: flex;
@@ -43,14 +70,3 @@
   align-items: flex-end;
 }
 
-.number-button {
-  background-color: lightyellow;
-}
-
-.operation-button {
-  background-color: lightblue;
-}
-
-.equals-button {
-  background-color: lightgreen;
-}

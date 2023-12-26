@@ -12,6 +12,7 @@ Phase 1
 - [x] Clicking AC should clear whole display.
 
 Phase 2
+- [ ] If current operand is empty, number clicked is appended to currentOperand.
 - [ ] If clicking =, if prevOperand exists, and if operator exists, and if currentOperand exists, prevOperand, operator and currentOperand should be displayed in upper part of display. Result in lower part.
 - [ ] AC should clear the whole display.
 - [ ] It should display current operand in lower part of display.
