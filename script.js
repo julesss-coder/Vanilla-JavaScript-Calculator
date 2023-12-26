@@ -9,37 +9,55 @@ const equalsButton = document.querySelector("[data-equals-button]");
 const numberButtons = document.querySelectorAll("[data-number-button]");
 const operationButtons = document.querySelectorAll("[data-operation-button]");
 
+// TODO: Get rid of `result`
+// DRY clear()
 
 class Calculator {
   constructor() {
+    this.clear();
+    this.setup();
+  }
+
+  clear() {
     this.prevOperand = "";
     this.currentOperand = "";
     this.operator = "";
     this.result = "";
   }
 
+  // TODO call clear and setup() in constructor
   setup() {
     // Add event listeners to buttons
     numberButtons.forEach(numberButton => {
       numberButton.addEventListener("click", event => {
         // If this were a regular function would `this` be `numberButton`?
-        this.currentOperand += event.target.textContent;
+        if (!this.result) {
+          this.currentOperand += event.target.textContent;
+        } else {
+          this.result += event.target.textContent;
+        }
         this.updateDisplay();
       });
 
     });
 
+    //Was wenn mehrere Operationen ohne = aneinander gekettet werden?
     operationButtons.forEach(operationButton => {
       operationButton.addEventListener("click", event => {
+        if (!this.currentOperand) {
+          console.log("Illegal operation");
+          return;
+        }
+
         if (!this.result) {
           this.prevOperand = this.currentOperand;
           this.currentOperand = "";
-        } else {
-          this.currentOperand = this.result;
+        } else if (this.result) {
+          this.prevOperand = this.result;
           this.result = "";
-          this.prevOperand = "";
-        }
-        
+          this.currentOperand = "";
+        } 
+
         this.operator = event.target.textContent;
         this.updateDisplay();
       });
@@ -56,30 +74,33 @@ class Calculator {
     });
 
     allClearButton.addEventListener("click", () => {
-      this.prevOperand = "";
-      this.currentOperand = "";
-      this.operator = "";
-      this.result = "";
+      this.clear();
       this.updateDisplay();
     });
 
     clearButton.addEventListener("click", () => {
-      if (this.currentOperand) {
-        this.currentOperand = this.currentOperand.slice(1);
+      if (!this.result) {
+        if (this.currentOperand) {
+          this.currentOperand = this.currentOperand.slice(1);
+          this.updateDisplay();
+        }
+      } else {
+        this.result = this.result.slice(1);
         this.updateDisplay();
+
       }
     });
 
   }
-  
+
   calculate() {
     let result;
-    switch(this.operator) {
+    switch (this.operator) {
       case "+":
         result = +this.prevOperand + +this.currentOperand;
         this.result = result.toString();
         break;
-      case "-": 
+      case "-":
         result = +this.prevOperand - +this.currentOperand;
         this.result = result.toString();
         break;
@@ -87,7 +108,7 @@ class Calculator {
         result = +this.prevOperand * +this.currentOperand;
         this.result = result.toString();
         break;
-      case "/":
+      case "÷":
         if (this.currentOperand === "0") {
           console.log("Division by 0 is not allowed.");
           return;
@@ -100,20 +121,25 @@ class Calculator {
         console.log("Unknown operation");
     }
   }
-  
+
+  // TODO Does not work - what do I want to happen?
   updateDisplay() {
+    // if no result
     if (!this.result) {
-      if (!this.prevOperand) {
-        lowerDisplay.textContent = this.currentOperand + this.operator;
-      } else {
-        lowerDisplay.textContent = this.prevOperand + this.operator + this.currentOperand;
-      }
+      // Case 1: current Operand, but no operator, no prev operand
+      lowerDisplay.textContent = this.prevOperand + this.operator + this.currentOperand;
+      upperDisplay.textContent = this.result;
     } else {
       upperDisplay.textContent = this.prevOperand + this.operator + this.currentOperand;
       lowerDisplay.textContent = this.result;
     }
+    // Case 2: Current operand and operator
+    lowerDisplay.textContent = this.currentOperand + this.operator;
+    console.log("prevOperand: ", this.prevOperand);
+    console.log("operator: ", this.operator);
+    console.log("current operand: ", this.currentOperand);
+    console.log("result: ", this.result);
   }
 }
 
 let calculator = new Calculator();
-calculator.setup();
