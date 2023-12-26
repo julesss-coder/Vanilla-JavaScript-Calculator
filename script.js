@@ -9,9 +9,8 @@ const equalsButton = document.querySelector("[data-equals-button]");
 const numberButtons = document.querySelectorAll("[data-number-button]");
 const operationButtons = document.querySelectorAll("[data-operation-button]");
 
-// TODO: Get rid of `result`
-// DRY clear()
-
+// V1: Implement without upper display
+// TODO Implement operation chaining
 class Calculator {
   constructor() {
     this.clear();
@@ -22,26 +21,27 @@ class Calculator {
     this.prevOperand = "";
     this.currentOperand = "";
     this.operator = "";
-    this.result = "";
   }
 
-  // TODO call clear and setup() in constructor
   setup() {
-    // Add event listeners to buttons
     numberButtons.forEach(numberButton => {
       numberButton.addEventListener("click", event => {
         // If this were a regular function would `this` be `numberButton`?
-        if (!this.result) {
-          this.currentOperand += event.target.textContent;
-        } else {
-          this.result += event.target.textContent;
-        }
-        this.updateDisplay();
+          let numberInput = event.target.textContent;
+          if (!this.operator) {
+            this.currentOperand += numberInput;
+          } else if (this.operator && this.currentOperand) {
+            this.prevOperand = this.currentOperand;
+            this.currentOperand = numberInput;
+          } else if (this.prevOperand && this.operator && !this.currentOperand) {
+            this.currentOperand += numberInput;
+          }
+
+          this.updateDisplay();
       });
 
     });
 
-    //Was wenn mehrere Operationen ohne = aneinander gekettet werden?
     operationButtons.forEach(operationButton => {
       operationButton.addEventListener("click", event => {
         if (!this.currentOperand) {
@@ -49,26 +49,17 @@ class Calculator {
           return;
         }
 
-        if (!this.result) {
-          this.prevOperand = this.currentOperand;
-          this.currentOperand = "";
-        } else if (this.result) {
-          this.prevOperand = this.result;
-          this.result = "";
-          this.currentOperand = "";
-        } 
-
         this.operator = event.target.textContent;
         this.updateDisplay();
       });
     });
 
     equalsButton.addEventListener("click", event => {
-      // Check if there are two operands and one operator
       if (this.prevOperand && this.operator && this.currentOperand) {
         this.calculate();
         this.updateDisplay();
       } else {
+        console.log("Illegal operation");
         return;
       }
     });
@@ -79,34 +70,34 @@ class Calculator {
     });
 
     clearButton.addEventListener("click", () => {
-      if (!this.result) {
-        if (this.currentOperand) {
-          this.currentOperand = this.currentOperand.slice(1);
-          this.updateDisplay();
-        }
-      } else {
-        this.result = this.result.slice(1);
-        this.updateDisplay();
-
+      if (!this.prevOperand && !this.operator && this.currentOperand) {
+        this.currentOperand = this.currentOperand.slice(1);
+      } else if (!this.prevOperand && this.operator && this.currentOperand) {
+        this.operator = "";
+      } else if (this.prevOperand && this.operator && this.currentOperand) {
+        this.currentOperand = this.currentOperand.slice(1);
+      } else if (this.prevOperand && this.operator) {
+        this.operator = "";
+      } else if (this.prevOperand) {
+        this.prevOperand = this.prevOperand.slice(1);
       }
+
+      this.updateDisplay();
     });
 
   }
 
   calculate() {
-    let result;
+    let result = null;
     switch (this.operator) {
       case "+":
         result = +this.prevOperand + +this.currentOperand;
-        this.result = result.toString();
         break;
       case "-":
         result = +this.prevOperand - +this.currentOperand;
-        this.result = result.toString();
         break;
       case "*":
         result = +this.prevOperand * +this.currentOperand;
-        this.result = result.toString();
         break;
       case "÷":
         if (this.currentOperand === "0") {
@@ -115,30 +106,26 @@ class Calculator {
         }
 
         result = +this.prevOperand / +this.currentOperand;
-        this.result = result.toString();
         break;
       default:
         console.log("Unknown operation");
     }
+
+    this.currentOperand = Number.isInteger(result) ? result.toString() : result.toFixed(3).toString();
+    this.operator = "";
+    this.prevOperand = "";
   }
 
-  // TODO Does not work - what do I want to happen?
   updateDisplay() {
-    // if no result
-    if (!this.result) {
-      // Case 1: current Operand, but no operator, no prev operand
-      lowerDisplay.textContent = this.prevOperand + this.operator + this.currentOperand;
-      upperDisplay.textContent = this.result;
+    if (!this.prevOperand) {
+      lowerDisplay.textContent = this.currentOperand + this.operator;
     } else {
-      upperDisplay.textContent = this.prevOperand + this.operator + this.currentOperand;
-      lowerDisplay.textContent = this.result;
+      lowerDisplay.textContent = this.prevOperand + this.operator + this.currentOperand;
     }
-    // Case 2: Current operand and operator
-    lowerDisplay.textContent = this.currentOperand + this.operator;
+
     console.log("prevOperand: ", this.prevOperand);
     console.log("operator: ", this.operator);
     console.log("current operand: ", this.currentOperand);
-    console.log("result: ", this.result);
   }
 }
 
