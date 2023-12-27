@@ -1,6 +1,6 @@
-// TODO Don't mix JS and CSS classes
+// // TODO Don't mix JS and CSS classes
 
-// Variables
+// // Variables
 let upperDisplay = document.querySelector("[data-upper-display]");
 let lowerDisplay = document.querySelector("[data-lower-display]");
 const allClearButton = document.querySelector("[data-all-clear-button]");
@@ -11,6 +11,7 @@ const operationButtons = document.querySelectorAll("[data-operation-button]");
 
 // V1: Implement without upper display
 // TODO Implement operation chaining
+// Achtung: Der Calc aus dem Video ist viel einfacher: bei Klick auf Operator wird currentOperand in obere Zeile verschoben. Obere Zeile ist reiner String, der im Laufe der Berechnung erweitert wird. Untere Zeile enthaelt derzeitige Zahl.
 class Calculator {
   constructor() {
     this.clear();
@@ -130,3 +131,53 @@ class Calculator {
 }
 
 let calculator = new Calculator();
+
+
+// ==== SIMPLE JS CALCULATOR WITHOUT UI ===
+
+// class Calculator { 
+//   constructor() {
+//     this.clear();
+//     this.getUserInput();
+//   }
+
+//   clear() {
+//     this.a = null;
+//     this.b = null;
+//     this.operator = null;
+//   }
+
+//   getUserInput() {
+//     this.a = +prompt("Enter a");
+//     this.operator = prompt("Enter operator");
+//     this.b = +prompt("Enter b");
+//     this.compute();
+//   }
+
+//   compute() {
+//     let result;
+//     switch (this.operator) {
+//       case "+": 
+//         result = this.a + this.b;
+//         break;
+//       case "-":
+//         result = this.a - this.b;
+//         break;
+//       case "*":
+//         result = this.a * this.b;
+//         break;
+//       case "/":
+//       case "÷":
+//         result = this.a / this.b;
+//         break;
+//       default:
+//         console.log("Illegal operation");
+//         return;
+//     }
+
+//     console.log(`${this.a} ${this.operator} ${this.b}`);
+//     console.log("result: ", result);
+//   }
+// }
+
+// let calculator = new Calculator();
