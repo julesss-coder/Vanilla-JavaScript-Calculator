@@ -1,6 +1,3 @@
-// // TODO Don't mix JS and CSS classes
-
-// // Variables
 let upperDisplay = document.querySelector("[data-upper-display]");
 let lowerDisplay = document.querySelector("[data-lower-display]");
 const allClearButton = document.querySelector("[data-all-clear-button]");
@@ -9,9 +6,7 @@ const equalsButton = document.querySelector("[data-equals-button]");
 const numberButtons = document.querySelectorAll("[data-number-button]");
 const operationButtons = document.querySelectorAll("[data-operation-button]");
 
-// V1: Implement without upper display
-// TODO Implement operation chaining
-// Achtung: Der Calc aus dem Video ist viel einfacher: bei Klick auf Operator wird currentOperand in obere Zeile verschoben. Obere Zeile ist reiner String, der im Laufe der Berechnung erweitert wird. Untere Zeile enthaelt derzeitige Zahl.
+// TODO Implement E notation for long integers
 class Calculator {
   constructor() {
     this.clear();
@@ -28,18 +23,7 @@ class Calculator {
   setup() {
     numberButtons.forEach(numberButton => {
       numberButton.addEventListener("click", event => {
-        // If this were a regular function would `this` be `numberButton`?
         const numberInput = event.target.textContent;
-        // WORKS
-        // if (!this.operator) {
-        //   this.currentOperand += numberInput;
-        // } else if (this.operator && !this.prevOperand) {
-        //   this.prevOperand = this.currentOperand;
-        //   this.currentOperand = "";
-        //   this.currentOperand += numberInput;
-        // } else {
-        //   this.currentOperand += numberInput;
-        // }
 
         if (this.currentOperand.includes(".") && !this.operator && numberInput === ".") {
           console.log("Illegal operation");
@@ -63,6 +47,16 @@ class Calculator {
 
     operationButtons.forEach(operationButton => {
       operationButton.addEventListener("click", event => {
+        if (!this.currentOperand) {
+          console.log("Illegal operation");
+          return;
+        }
+        // If current operand ends in comma, remove comma
+        if (this.currentOperand.indexOf(".") === this.currentOperand.length - 1) {
+          this.currentOperand = this.currentOperand.slice(0, -1);
+        }
+
+        // Operation chaining: If there is a full operation and another operand is clicked, compute the previous values, then reset operator.
         if (this.prevOperand && this.operator && this.currentOperand) {
           this.compute();
         }
@@ -73,6 +67,11 @@ class Calculator {
     });
 
     equalsButton.addEventListener("click", event => {
+      // If current operand ends in comma, remove comma
+      if (this.currentOperand.indexOf(".") === this.currentOperand.length - 1) {
+        this.currentOperand = this.currentOperand.slice(0, -1);
+      }
+
       if (this.prevOperand && this.operator && this.currentOperand) {
         this.compute();
       } else {
@@ -88,18 +87,15 @@ class Calculator {
       this.updateDisplay();
     });
 
-    // Clearing does not work for floating point numbers
-    // Needs extra function
-    // Might be the same as the one used for processing comma
     clearButton.addEventListener("click", () => {
       if (!this.prevOperand) { 
         if (this.operator) {
           this.operator = "";
         } else {
-          this.currentOperand = this.currentOperand.slice(1);
+          this.currentOperand = this.currentOperand.slice(0, -1);
         }
       } else {
-        this.currentOperand = this.currentOperand.slice(1);
+        this.currentOperand = this.currentOperand.slice(0, -1);
         if (!this.currentOperand) {
           this.currentOperand = this.prevOperand;
           this.prevOperand = "";
@@ -147,7 +143,7 @@ class Calculator {
       return float;
     }
     
-    // In case of floating point number, get correct number. Only if more than 5 post 0 digits, cut it off
+    // In case of floating point number, get correct number. Only if more than 5 post 0 digits, cut it off.
     let formattedFloat = parseFloat(float);
     formattedFloat = formattedFloat.toString().split(".")[1].length > 5 ? formattedFloat.toFixed(5).toString() : formattedFloat.toString();
     return formattedFloat;
@@ -170,53 +166,3 @@ class Calculator {
 }
 
 let calculator = new Calculator();
-
-
-// ==== SIMPLE JS CALCULATOR WITHOUT UI ===
-
-// class Calculator { 
-//   constructor() {
-//     this.clear();
-//     this.getUserInput();
-//   }
-
-//   clear() {
-//     this.a = null;
-//     this.b = null;
-//     this.operator = null;
-//   }
-
-//   getUserInput() {
-//     this.a = +prompt("Enter a");
-//     this.operator = prompt("Enter operator");
-//     this.b = +prompt("Enter b");
-//     this.compute();
-//   }
-
-//   compute() {
-//     let result;
-//     switch (this.operator) {
-//       case "+": 
-//         result = this.a + this.b;
-//         break;
-//       case "-":
-//         result = this.a - this.b;
-//         break;
-//       case "*":
-//         result = this.a * this.b;
-//         break;
-//       case "/":
-//       case "÷":
-//         result = this.a / this.b;
-//         break;
-//       default:
-//         console.log("Illegal operation");
-//         return;
-//     }
-
-//     console.log(`${this.a} ${this.operator} ${this.b}`);
-//     console.log("result: ", result);
-//   }
-// }
-
-// let calculator = new Calculator();
