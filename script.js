@@ -22,34 +22,39 @@ class Calculator {
     this.prevOperand = "";
     this.currentOperand = "";
     this.operator = "";
+    this.computationHistory = "";
   }
 
   setup() {
     numberButtons.forEach(numberButton => {
       numberButton.addEventListener("click", event => {
         // If this were a regular function would `this` be `numberButton`?
-          let numberInput = event.target.textContent;
-          if (!this.operator) {
-            this.currentOperand += numberInput;
-          } else if (this.operator && this.currentOperand) {
-            this.prevOperand = this.currentOperand;
-            this.currentOperand = numberInput;
-          } else if (this.prevOperand && this.operator && !this.currentOperand) {
-            this.currentOperand += numberInput;
-          }
+        const numberInput = event.target.textContent;
+        // WORKS
+        // if (!this.operator) {
+        //   this.currentOperand += numberInput;
+        // } else if (this.operator && !this.prevOperand) {
+        //   this.prevOperand = this.currentOperand;
+        //   this.currentOperand = "";
+        //   this.currentOperand += numberInput;
+        // } else {
+        //   this.currentOperand += numberInput;
+        // }
 
-          this.updateDisplay();
+        if (this.operator && !this.prevOperand) {
+          this.prevOperand = this.currentOperand;
+          this.currentOperand = "";
+        }
+        this.currentOperand += numberInput;
+
+
+        this.updateDisplay();
       });
 
     });
 
     operationButtons.forEach(operationButton => {
       operationButton.addEventListener("click", event => {
-        if (!this.currentOperand) {
-          console.log("Illegal operation");
-          return;
-        }
-
         this.operator = event.target.textContent;
         this.updateDisplay();
       });
@@ -57,12 +62,13 @@ class Calculator {
 
     equalsButton.addEventListener("click", event => {
       if (this.prevOperand && this.operator && this.currentOperand) {
-        this.calculate();
-        this.updateDisplay();
+        this.compute();
       } else {
-        console.log("Illegal operation");
+        console.log("Illegal operation.");
         return;
       }
+
+      this.updateDisplay();
     });
 
     allClearButton.addEventListener("click", () => {
@@ -70,35 +76,23 @@ class Calculator {
       this.updateDisplay();
     });
 
-    clearButton.addEventListener("click", () => {
-      if (!this.prevOperand && !this.operator && this.currentOperand) {
-        this.currentOperand = this.currentOperand.slice(1);
-      } else if (!this.prevOperand && this.operator && this.currentOperand) {
-        this.operator = "";
-      } else if (this.prevOperand && this.operator && this.currentOperand) {
-        this.currentOperand = this.currentOperand.slice(1);
-      } else if (this.prevOperand && this.operator) {
-        this.operator = "";
-      } else if (this.prevOperand) {
-        this.prevOperand = this.prevOperand.slice(1);
-      }
+    // clearButton.addEventListener("click", () => {
 
-      this.updateDisplay();
-    });
+    // });
 
   }
 
-  calculate() {
-    let result = null;
+  compute() {
+    this.computationHistory = `${this.prevOperand}${this.operator}${this.currentOperand}`;
     switch (this.operator) {
       case "+":
-        result = +this.prevOperand + +this.currentOperand;
+        this.currentOperand = +this.prevOperand + +this.currentOperand;
         break;
       case "-":
-        result = +this.prevOperand - +this.currentOperand;
+        this.currentOperand = +this.prevOperand - +this.currentOperand;
         break;
       case "*":
-        result = +this.prevOperand * +this.currentOperand;
+        this.currentOperand = +this.prevOperand * +this.currentOperand;
         break;
       case "÷":
         if (this.currentOperand === "0") {
@@ -106,15 +100,16 @@ class Calculator {
           return;
         }
 
-        result = +this.prevOperand / +this.currentOperand;
+        this.currentOperand = +this.prevOperand / +this.currentOperand;
         break;
       default:
         console.log("Unknown operation");
+        this.computationHistory = "Error";
     }
 
-    this.currentOperand = Number.isInteger(result) ? result.toString() : result.toFixed(3).toString();
-    this.operator = "";
+    this.currentOperand = Number.isInteger(this.currentOperand) ? this.currentOperand : this.currentOperand.toFixed(5);
     this.prevOperand = "";
+    this.operator = "";
   }
 
   updateDisplay() {
@@ -124,6 +119,9 @@ class Calculator {
       lowerDisplay.textContent = this.prevOperand + this.operator + this.currentOperand;
     }
 
+    upperDisplay.textContent = this.computationHistory;
+
+    console.log("computation history: ", this.computationHistory);
     console.log("prevOperand: ", this.prevOperand);
     console.log("operator: ", this.operator);
     console.log("current operand: ", this.currentOperand);
