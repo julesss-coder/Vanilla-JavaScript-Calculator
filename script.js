@@ -41,16 +41,24 @@ class Calculator {
         //   this.currentOperand += numberInput;
         // }
 
+        if (this.currentOperand.includes(".") && !this.operator && numberInput === ".") {
+          console.log("Illegal operation");
+          return;
+        }
+
         if (this.operator && !this.prevOperand) {
           this.prevOperand = this.currentOperand;
           this.currentOperand = "";
         }
-        this.currentOperand += numberInput;
 
+        if (!this.currentOperand && numberInput == "." || this.operator && !this.prevOperand) {
+          this.currentOperand = "0.";
+        } else {
+          this.currentOperand += numberInput;
+        }
 
         this.updateDisplay();
       });
-
     });
 
     operationButtons.forEach(operationButton => {
@@ -80,14 +88,32 @@ class Calculator {
       this.updateDisplay();
     });
 
-    // clearButton.addEventListener("click", () => {
+    // Clearing does not work for floating point numbers
+    // Needs extra function
+    // Might be the same as the one used for processing comma
+    clearButton.addEventListener("click", () => {
+      if (!this.prevOperand) { 
+        if (this.operator) {
+          this.operator = "";
+        } else {
+          this.currentOperand = this.currentOperand.slice(1);
+        }
+      } else {
+        this.currentOperand = this.currentOperand.slice(1);
+        if (!this.currentOperand) {
+          this.currentOperand = this.prevOperand;
+          this.prevOperand = "";
+        }
+      }
 
-    // });
+      this.updateDisplay();
+    });
 
   }
 
   compute() {
     this.computationHistory = `${this.prevOperand}${this.operator}${this.currentOperand}`;
+
     switch (this.operator) {
       case "+":
         this.currentOperand = +this.prevOperand + +this.currentOperand;
@@ -111,9 +137,20 @@ class Calculator {
         this.computationHistory = "Error";
     }
 
-    this.currentOperand = Number.isInteger(this.currentOperand) ? this.currentOperand : this.currentOperand.toFixed(5);
+    this.currentOperand = Number.isInteger(this.currentOperand) ? this.currentOperand.toString() : this.getFloat(this.currentOperand);
     this.prevOperand = "";
     this.operator = "";
+  }
+  
+  getFloat(float) {
+    if (float.toString().includes("e")) {
+      return float;
+    }
+    
+    // In case of floating point number, get correct number. Only if more than 5 post 0 digits, cut it off
+    let formattedFloat = parseFloat(float);
+    formattedFloat = formattedFloat.toString().split(".")[1].length > 5 ? formattedFloat.toFixed(5).toString() : formattedFloat.toString();
+    return formattedFloat;
   }
 
   updateDisplay() {
