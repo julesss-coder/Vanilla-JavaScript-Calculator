@@ -55,6 +55,10 @@ class Calculator {
 
     operationButtons.forEach(operationButton => {
       operationButton.addEventListener("click", event => {
+        if (this.prevOperand && this.operator && this.currentOperand) {
+          this.compute();
+        }
+        
         this.operator = event.target.textContent;
         this.updateDisplay();
       });
